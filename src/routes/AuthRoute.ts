@@ -6,6 +6,7 @@ import {
   resendOtp,
   forgetPassword,
   resetPassword,
+  refreshToken,
   getMe,
 } from "../controllers/AuthController";
 import { verifyToken } from "../middlewares/authMiddleware";
@@ -19,6 +20,7 @@ router.post("/verify-otp", verifyOtp);
 router.post("/resend-otp", resendOtp);
 router.post("/forget-password", forgetPassword);
 router.post("/reset-password", resetPassword);
+router.post("/refresh-token", refreshToken);
 router.get("/me", verifyToken, getMe);
 
 export default router;

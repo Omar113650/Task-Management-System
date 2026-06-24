@@ -1,13 +1,13 @@
 import mongoose, { Document, Schema, Model } from "mongoose";
 
-interface ITask extends Document {
+export interface ITask extends Document {
   title: string;
   description: string;
-  priority: "Low" | "Medium" | "High" ;
+  priority: "Low" | "Medium" | "High";
   dueDate: Date;
-  status: "Todo" | "InProgress" | "Done";
-  assignedTo: mongoose.Types.ObjectId;  
-  project: mongoose.Types.ObjectId;      
+  status: "Pending" | "InProgress" | "Done";
+  assignedTo: mongoose.Types.ObjectId;
+  project: mongoose.Types.ObjectId;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -37,8 +37,8 @@ const TaskSchema = new Schema<ITask>(
     },
     status: {
       type: String,
-      enum: ["Todo", "InProgress", "Done"],
-      default: "Todo",
+      enum: ["Pending", "InProgress", "Done"],
+      default: "Pending",
     },
     assignedTo: {
       type: mongoose.Schema.Types.ObjectId,
@@ -54,5 +54,9 @@ const TaskSchema = new Schema<ITask>(
   { timestamps: true }
 );
 
-const Task: Model<ITask> = mongoose.model<ITask>("Task", TaskSchema);
+const Task: Model<ITask> = mongoose.model<ITask>(
+  "Task",
+  TaskSchema
+);
+
 export default Task;
