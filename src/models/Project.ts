@@ -1,10 +1,11 @@
 import mongoose, { Document, Schema, Model } from "mongoose";
 
-interface IProject extends Document {
+export interface IProject extends Document {
   title: string;
   description: string;
-  status: "Active" | "Inactive" | "Completed" | "Pending";
-  User: mongoose.Types.ObjectId;       
+  status: "Active"  | "Completed" | "Pending";
+  User: mongoose.Types.ObjectId;
+
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -34,11 +35,11 @@ const ProjectSchema = new Schema<IProject>(
       required: true,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const Project: Model<IProject> = mongoose.model<IProject>(
   "Project",
-  ProjectSchema
+  ProjectSchema,
 );
 export default Project;
