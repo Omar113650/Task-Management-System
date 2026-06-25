@@ -10,6 +10,7 @@ type AuthInput = {
   name: string;
   email: string;
   password: string;
+  role?: "Admin" | "Member";
 };
 
 type LoginInput = {
@@ -43,7 +44,7 @@ export class AppError extends Error {
 }
 
 // register
-export const registerService = async ({ name, email, password }: AuthInput) => {
+export const registerService = async ({ name, email, password, role }: AuthInput) => {
   const existingUser = await User.findOne({ email });
 
   if (existingUser) {
@@ -60,7 +61,7 @@ export const registerService = async ({ name, email, password }: AuthInput) => {
     name,
     email,
     password: hashed,
-    role: "Member",
+    role: role || "Member",
     isActive: true,
     isVerified: false,
     otp: otpHash,
@@ -80,6 +81,8 @@ export const registerService = async ({ name, email, password }: AuthInput) => {
       id: user._id,
       name: user.name,
       email: user.email,
+      isVerified: user.isVerified,
+      role: user.role,
     },
     accessToken,
     refreshToken,

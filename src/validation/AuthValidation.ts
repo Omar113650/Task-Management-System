@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-// Register
 export const RegisterValidation = z.object({
   name: z
     .string({ error: "name is required" })
@@ -14,6 +13,8 @@ export const RegisterValidation = z.object({
   password: z
     .string({ error: "password is required" })
     .min(8, "password must be at least 8 characters"),
+
+  role: z.enum(["Admin", "Member"]).optional(),
 });
 
 // Login
