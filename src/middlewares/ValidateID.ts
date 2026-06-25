@@ -1,16 +1,17 @@
 import { Request, Response, NextFunction } from "express";
+import mongoose from "mongoose";
 
-export const ValidatedID = (
+export const ValidateID = (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   const { id } = req.params;
 
-  if (!/^\d+$/.test(id as string)) {
-    return res
-      .status(400)
-      .json({ message: "Invalid ID: Must be a positive number" });
+  if (!mongoose.Types.ObjectId.isValid(id as string)) {
+    return res.status(400).json({
+      message: "Invalid MongoDB ObjectId",
+    });
   }
 
   next();

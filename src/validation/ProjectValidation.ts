@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const ProjectSchema = z.object({
+export const CreateProjectValidation = z.object({
   title: z
     .string({ error: "title is required" })
     .min(1, "title cannot be empty")
@@ -17,4 +17,5 @@ export const ProjectSchema = z.object({
     .optional(),
 });
 
-export type ProjectValidation= z.infer<typeof ProjectSchema>;
+export const UpdateProjectValidation =
+  CreateProjectValidation.partial();

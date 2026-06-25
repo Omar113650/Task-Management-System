@@ -1,6 +1,5 @@
 import { z } from "zod";
-
-export const TasksSchema = z.object({
+export const CreateTaskValidation = z.object({
   title: z
     .string({ error: "title is required" })
     .min(1, "title cannot be empty")
@@ -11,7 +10,10 @@ export const TasksSchema = z.object({
     .min(1, "description cannot be empty")
     .max(500, "description must be at most 500 characters"),
 
-  priority: z.enum(["Low", "Medium", "High"]).default("Medium").optional(),
+  priority: z
+    .enum(["Low", "Medium", "High"])
+    .default("Medium")
+    .optional(),
 
   dueDate: z.coerce.date({
     error: "Due date is required",
@@ -31,4 +33,5 @@ export const TasksSchema = z.object({
     .regex(/^[a-f\d]{24}$/i, "Invalid Project ID"),
 });
 
-export type TasksValidation = z.infer<typeof TasksSchema>;
+export const UpdateTaskValidation =
+  CreateTaskValidation.partial();

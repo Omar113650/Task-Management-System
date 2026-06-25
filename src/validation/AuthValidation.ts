@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 // Register
-export const RegisterSchema = z.object({
+export const RegisterValidation = z.object({
   name: z
     .string({ error: "name is required" })
     .min(2, "name must be at least 2 characters")
@@ -17,7 +17,7 @@ export const RegisterSchema = z.object({
 });
 
 // Login
-export const LoginSchema = z.object({
+export const LoginValidation = z.object({
   email: z
     .string({ error: "email is required" })
     .email("Invalid email address"),
@@ -28,30 +28,34 @@ export const LoginSchema = z.object({
 });
 
 // Verify OTP
-export const VerifyOtpSchema = z.object({
+export const VerifyOtpValidation = z.object({
   email: z
-    .string({ error: "email is required" })
+    .string({ error: "Email is required" })
+    .trim()
     .email("Invalid email address"),
 
-  otp: z.string({ error: "OTP is required" }).length(6, "OTP must be 6 digits"),
+  otp: z
+    .string({ error: "OTP is required" })
+    .trim()
+    .regex(/^\d{6}$/, "OTP must be exactly 6 digits"),
 });
 
 // Resend OTP
-export const ResendOtpSchema = z.object({
+export const ResendOtpValidation = z.object({
   email: z
     .string({ error: "email is required" })
     .email("Invalid email address"),
 });
 
 // Forget Password
-export const ForgetPasswordSchema = z.object({
+export const ForgetPasswordValidation = z.object({
   email: z
     .string({ error: "email is required" })
     .email("Invalid email address"),
 });
 
 // Reset Password
-export const ResetPasswordSchema = z.object({
+export const ResetPasswordValidation = z.object({
   userId: z.string({ error: "User ID is required" }),
 
   resetPasswordToken: z.string({
@@ -63,9 +67,3 @@ export const ResetPasswordSchema = z.object({
     .min(8, "password must be at least 8 characters"),
 });
 
-export type RegisterValidation = z.infer<typeof RegisterSchema>;
-export type LoginValidation = z.infer<typeof LoginSchema>;
-export type VerifyOtpValidation = z.infer<typeof VerifyOtpSchema>;
-export type ResendOtpValidation = z.infer<typeof ResendOtpSchema>;
-export type ForgetPasswordValidation = z.infer<typeof ForgetPasswordSchema>;
-export type ResetPasswordValidation = z.infer<typeof ResetPasswordSchema>;
