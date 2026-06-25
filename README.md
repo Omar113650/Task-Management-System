@@ -196,9 +196,3 @@ All list endpoints support the following query parameters:
 | View Tasks | ✅ | ✅ |
 | Update Task status | ✅ | ✅ |
 | Delete Task | ✅ | ❌ |
-
----
-
-## 📄 License
-
-MIT
