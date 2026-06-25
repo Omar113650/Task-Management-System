@@ -10,7 +10,7 @@ import {
   resetPasswordService,
   refreshTokenService,
 } from "../services/AuthServices";
-import { setRefreshCookie, clearRefreshCookie } from "../utils/Token";
+import { setRefreshCookie } from "../utils/Token";
 
 // @desc   Register new user
 // @route  POST /api/v1/auth/register
@@ -95,23 +95,25 @@ export const resetPassword = asyncHandler(
 // @desc   Refresh access token
 // @route  POST /api/v1/auth/refresh-token
 // @access Public
-export const refreshToken = asyncHandler(async (req: Request, res: Response) => {
-  const token = req.cookies?.RefreshToken;
+export const refreshToken = asyncHandler(
+  async (req: Request, res: Response) => {
+    const token = req.cookies?.RefreshToken;
 
-  const { accessToken } = await refreshTokenService(token);
+    const { accessToken } = await refreshTokenService(token);
 
-  res.cookie("AccessToken", accessToken, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict" as const,
-    maxAge: 15 * 60 * 1000,
-  });
+    res.cookie("AccessToken", accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict" as const,
+      maxAge: 15 * 60 * 1000,
+    });
 
-  res.status(200).json({
-    message: "Access token refreshed successfully",
-    accessToken,
-  });
-});
+    res.status(200).json({
+      message: "Access token refreshed successfully",
+      accessToken,
+    });
+  },
+);
 
 // @desc   Logout user
 // @route  POST /api/v1/auth/logout

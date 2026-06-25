@@ -1,9 +1,7 @@
 import Project, { IProject } from "../models/Project";
 import { ApiFeatures } from "../utils/api-features";
 
-export const createProjectService = async (
-  data: Partial<IProject>
-) => {
+export const createProjectService = async (data: Partial<IProject>) => {
   return await Project.create(data);
 };
 
@@ -23,7 +21,7 @@ export const getProjectByIdService = async (id: string) => {
 
 export const updateProjectService = async (
   id: string,
-  data: Partial<IProject>
+  data: Partial<IProject>,
 ) => {
   return await Project.findByIdAndUpdate(id, data, {
     new: true,

@@ -27,7 +27,7 @@ const router = express.Router();
 router.get("/count", verifyToken, countTasks);
 router.post("/", verifyAdmin, validate(CreateTaskValidation), createTask);
 router.get("/", verifyMember, getAllTasks);
-router.get("/project/:projectId", verifyAdmin, ValidateID, getTasksByProject);
+router.get("/project/:projectId", verifyAdmin, getTasksByProject);
 router.get("/:id", verifyToken, ValidateID, getTaskById);
 router.patch(
   "/:id",

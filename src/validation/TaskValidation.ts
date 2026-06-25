@@ -33,5 +33,4 @@ export const CreateTaskValidation = z.object({
     .regex(/^[a-f\d]{24}$/i, "Invalid Project ID"),
 });
 
-export const UpdateTaskValidation =
-  CreateTaskValidation.partial();
+export const UpdateTaskValidation=CreateTaskValidation.partial();

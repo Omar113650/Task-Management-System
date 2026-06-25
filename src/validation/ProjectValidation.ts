@@ -15,7 +15,10 @@ export const CreateProjectValidation = z.object({
     .enum(["Active", "Completed", "Pending"])
     .default("Pending")
     .optional(),
+
+  User: z
+    .string({ error: "User is required" })
+    .regex(/^[0-9a-fA-F]{24}$/, "Invalid User ID"),
 });
 
-export const UpdateProjectValidation =
-  CreateProjectValidation.partial();
+export const UpdateProjectValidation=CreateProjectValidation.partial();

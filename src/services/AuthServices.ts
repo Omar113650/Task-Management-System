@@ -44,7 +44,12 @@ export class AppError extends Error {
 }
 
 // register
-export const registerService = async ({ name, email, password, role }: AuthInput) => {
+export const registerService = async ({
+  name,
+  email,
+  password,
+  role,
+}: AuthInput) => {
   const existingUser = await User.findOne({ email });
 
   if (existingUser) {
@@ -123,7 +128,7 @@ export const loginService = async ({ email, password }: LoginInput) => {
     refreshToken,
   };
 };
-// ================= REFRESH TOKEN SERVICE =================
+//  refresh Token
 export const refreshTokenService = async (refreshToken: string) => {
   if (!refreshToken) {
     throw new AppError("No refresh token provided", 401);

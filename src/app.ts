@@ -50,4 +50,5 @@ app.use("/api/v1/tasks", taskRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
+
 export default app;

@@ -22,7 +22,7 @@ export const createTask = asyncHandler(
       message: "Task created successfully",
       task,
     });
-  }
+  },
 );
 
 // @desc Get All Tasks
@@ -36,7 +36,7 @@ export const getAllTasks = asyncHandler(
       message: "Tasks retrieved successfully",
       ...tasks,
     });
-  }
+  },
 );
 
 // @desc Get Tasks By Project
@@ -45,7 +45,7 @@ export const getAllTasks = asyncHandler(
 export const getTasksByProject = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
     const tasks = await getTasksByProjectService(
-      req.params.projectId as string
+      req.params.projectId as string,
     );
 
     res.status(200).json({
@@ -53,7 +53,7 @@ export const getTasksByProject = asyncHandler(
       results: tasks.length,
       tasks,
     });
-  }
+  },
 );
 
 // @desc Get Task By Id
@@ -74,7 +74,7 @@ export const getTaskById = asyncHandler(
       message: "Task retrieved successfully",
       task,
     });
-  }
+  },
 );
 
 // @desc Update Task
@@ -82,10 +82,7 @@ export const getTaskById = asyncHandler(
 // @access Public
 export const updateTask = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
-    const task = await updateTaskService(
-      req.params.id as string,
-      req.body
-    );
+    const task = await updateTaskService(req.params.id as string, req.body);
 
     if (!task) {
       res.status(404).json({
@@ -98,7 +95,7 @@ export const updateTask = asyncHandler(
       message: "Task updated successfully",
       task,
     });
-  }
+  },
 );
 
 // @desc Delete Task
@@ -118,7 +115,7 @@ export const deleteTask = asyncHandler(
     res.status(200).json({
       message: "Task deleted successfully",
     });
-  }
+  },
 );
 
 // @desc Count Tasks
@@ -131,5 +128,5 @@ export const countTasks = asyncHandler(
     res.status(200).json({
       count,
     });
-  }
+  },
 );

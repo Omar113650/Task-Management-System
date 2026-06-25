@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+// register
 export const RegisterValidation = z.object({
   name: z
     .string({ error: "name is required" })
@@ -17,7 +18,7 @@ export const RegisterValidation = z.object({
   role: z.enum(["Admin", "Member"]).optional(),
 });
 
-// Login
+// login
 export const LoginValidation = z.object({
   email: z
     .string({ error: "email is required" })
@@ -28,7 +29,7 @@ export const LoginValidation = z.object({
     .min(8, "password must be at least 8 characters"),
 });
 
-// Verify OTP
+// verify OTP
 export const VerifyOtpValidation = z.object({
   email: z
     .string({ error: "Email is required" })
@@ -41,21 +42,21 @@ export const VerifyOtpValidation = z.object({
     .regex(/^\d{6}$/, "OTP must be exactly 6 digits"),
 });
 
-// Resend OTP
+// resend OTP
 export const ResendOtpValidation = z.object({
   email: z
     .string({ error: "email is required" })
     .email("Invalid email address"),
 });
 
-// Forget Password
+// forget Password
 export const ForgetPasswordValidation = z.object({
   email: z
     .string({ error: "email is required" })
     .email("Invalid email address"),
 });
 
-// Reset Password
+// reset Password
 export const ResetPasswordValidation = z.object({
   userId: z.string({ error: "User ID is required" }),
 
@@ -67,4 +68,3 @@ export const ResetPasswordValidation = z.object({
     .string({ error: "New password is required" })
     .min(8, "password must be at least 8 characters"),
 });
-

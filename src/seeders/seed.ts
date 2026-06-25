@@ -22,4 +22,7 @@ const migrate = async () => {
 
 migrate();
 
+
+
+
 // npm run seed

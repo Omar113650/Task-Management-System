@@ -15,7 +15,7 @@ declare global {
   }
 }
 
-// Verify Access Token
+// Verify Token
 export const verifyToken = (
   req: Request,
   res: Response,
@@ -63,7 +63,7 @@ export const verifyAdmin = (
   });
 };
 
-// Member Or Admin
+// Member Only
 export const verifyMember = (
   req: Request,
   res: Response,
