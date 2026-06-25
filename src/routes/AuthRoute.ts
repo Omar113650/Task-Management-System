@@ -7,20 +7,21 @@ import {
   forgetPassword,
   resetPassword,
   refreshToken,
-  getMe,
+  logout
 } from "../controllers/AuthController";
-import { verifyToken } from "../middlewares/authMiddleware";
 
 const router = express.Router();
 
-// ===== Auth Routes =====
 router.post("/register", register);
 router.post("/login", login);
+router.post("/logout", logout);
 router.post("/verify-otp", verifyOtp);
 router.post("/resend-otp", resendOtp);
 router.post("/forget-password", forgetPassword);
 router.post("/reset-password", resetPassword);
 router.post("/refresh-token", refreshToken);
-router.get("/me", verifyToken, getMe);
+
+
+
 
 export default router;

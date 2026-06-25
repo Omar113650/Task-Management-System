@@ -1,12 +1,19 @@
 import { Request, Response, NextFunction } from "express";
-import { ObjectSchema } from "joi";
+import { ZodSchema } from "zod";
 
-const validate = (schema: ObjectSchema) => {
-  return (req: Request, res: Response, next: NextFunction) => {
-    const { error } = schema.validate(req.body);
-    if (error) {
-      return res.status(400).json({ message: error.details[0].message });
+const validate = (schema: ZodSchema) => {
+  return (req: Request, res: Response, next: NextFunction): void => {
+    const result = schema.safeParse(req.body);
+
+    if (!result.success) {
+      res.status(400).json({
+        message: "Validation Error",
+        errors: result.error.flatten().fieldErrors,
+      });
+      return;
     }
+
+    req.body = result.data;
     next();
   };
 };

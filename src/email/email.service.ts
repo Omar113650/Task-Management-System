@@ -13,17 +13,19 @@ class EmailService {
   private transporter;
 
   constructor() {
+    // console.log("EMAIL USER:", process.env.APP_EMAIL_ADDRESS);
+    // console.log("EMAIL PASS:", process.env.APP_EMAIL_PASSWORD);
     this.transporter = nodemailer.createTransport({
       service: "gmail",
+      // auth: {
+      //   user: "omarabdalallh21@gmail.com",
+      //   pass: "uqorzuxiknbscill"
+
+      // },
+
       auth: {
-        user: "omarabdalallh21@gmail.com",
-        pass: "uqorzuxiknbscill"
-
-
-// APP_EMAIL_ADDRESS=omarabdalallh21@gmail.com
-// APP_EMAIL_PASSWORD=uqorzuxiknbscill
-
-
+        user: process.env.APP_EMAIL_ADDRESS,
+        pass: process.env.APP_EMAIL_PASSWORD,
       },
       secure: true,
     });
@@ -38,9 +40,9 @@ class EmailService {
     });
   }
 
-  // ================= OTP EMAIL =================
+  // otp-email
   async sendOtpEmail({ to, subject, otp }: SendEmailProps) {
-    console.log(`✉️ Sending OTP email to: ${to}`);
+    console.log(` Sending OTP email to: ${to}`);
 
     const htmlContent = `
       <div style="font-family: Arial; background:#0b0b14; padding:40px 0;">
@@ -62,7 +64,7 @@ class EmailService {
             font-size:28px;
             margin-bottom:10px;
           ">
-            🔐 Task Management System Verification
+             Task Management System Verification
           </h1>
 
           <p style="color:#8a8498;font-size:14px;">
@@ -103,9 +105,9 @@ class EmailService {
     });
   }
 
-  // ================= SUCCESS =================
+  //  success otp
   async sendOtpSuccessEmail({ to }: SendEmailProps) {
-    console.log(`✅ Sending OTP Success email to: ${to}`);
+    console.log(` Sending OTP Success email to: ${to}`);
 
     const htmlContent = `
       <div style="font-family: Arial; background:#0b0b14; padding:40px 0;">
@@ -120,7 +122,7 @@ class EmailService {
         ">
 
           <h1 style="color:#f0c96b;font-size:26px;">
-            ✅ Verified Successfully
+             Verified Successfully
           </h1>
 
           <p style="color:#8a8498;font-size:14px;">
@@ -138,9 +140,9 @@ class EmailService {
     });
   }
 
-  // ================= WELCOME =================
+  //  welcome
   async sendWelcomeAfterLogin({ to, subject }: SendEmailProps) {
-    console.log(`👋 Sending Welcome email to: ${to}`);
+    console.log(` Sending Welcome email to: ${to}`);
 
     const htmlContent = `
       <div style="font-family: Arial; background:#0b0b14; padding:40px 0;">
@@ -160,7 +162,7 @@ class EmailService {
             -webkit-text-fill-color:transparent;
             font-size:28px;
           ">
-            👋 Welcome Back to Task Management System
+             Welcome Back to Task Management System
           </h1>
 
           <p style="color:#8a8498;font-size:14px;">
@@ -178,9 +180,9 @@ class EmailService {
     });
   }
 
-  // ================= RESET PASSWORD =================
+  //  RESET PASSWORD
   async sendResetPasswordEmail(to: string, link: string) {
-    console.log(`🔑 Sending Reset Password email to: ${to}`);
+    console.log(`Sending Reset Password email to: ${to}`);
 
     const htmlContent = `
       <div style="font-family: Arial; background:#0b0b14; padding:40px 0;">
@@ -195,7 +197,7 @@ class EmailService {
         ">
 
           <h1 style="color:#f0c96b;font-size:26px;">
-            🔑 Reset Password
+             Reset Password
           </h1>
 
           <p style="color:#8a8498;font-size:14px;">
@@ -228,41 +230,6 @@ class EmailService {
       subject: "Task Management System - Reset Password",
       html: htmlContent,
     });
-  }
-
-  // ================= NOTIFICATION =================
-  async notificationNewEvent({ to, subject, title, body }: SendEmailProps) {
-    const htmlContent = `
-      <div style="font-family: Arial; background:#0b0b14; padding:40px 0;">
-        <div style="
-          max-width:600px;
-          margin:auto;
-          background:#0e0e1a;
-          padding:40px;
-          border-radius:16px;
-          border:1px solid #1e1e2e;
-          text-align:center;
-        ">
-
-          <h2 style="color:#f0c96b;">
-            🔔 ${title}
-          </h2>
-
-          <p style="color:#8a8498;font-size:14px;">
-            ${body}
-          </p>
-
-        </div>
-      </div>
-    `;
-
-    await this.sendEmail({
-      to,
-      subject: subject || title,
-      html: htmlContent,
-    });
-
-    return { to, subject, title };
   }
 }
 

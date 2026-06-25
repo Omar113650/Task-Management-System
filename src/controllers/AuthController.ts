@@ -1,246 +1,130 @@
 import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
+
 import {
-  AuthService,
-  RegisterSchema,
-  LoginSchema,
-  OtpSchema,
-  EmailSchema,
-  ResetPasswordSchema,
+  registerService,
+  loginService,
+  verifyOtpService,
+  resendOtpService,
+  forgetPasswordService,
+  resetPasswordService,
+  refreshTokenService,
 } from "../services/AuthServices";
-import { generateTokens, setRefreshCookie } from "../utils/Token";
+import { setRefreshCookie, clearRefreshCookie } from "../utils/Token";
 
-// ===== Helper =====
-const handleError = (res: Response, err: unknown) => {
-  const error = err as { status?: number; message?: string };
-  const status = error.status || 500;
-  const message = error.message || "Server error";
+// @desc   Register new user
+// @route  POST /api/v1/auth/register
+// @access Public
+export const register = asyncHandler(async (req: Request, res: Response) => {
+  const { user, accessToken, refreshToken } = await registerService(req.body);
 
-  res.status(status).json({ message });
-};
+  setRefreshCookie(res, refreshToken);
 
-// ===== Controllers =====
+  res.status(201).json({
+    message: "User created successfully",
+    data: { user, accessToken, refreshToken },
+  });
+});
 
-// POST /auth/register
-export const register = asyncHandler(
-  async (req: Request, res: Response) => {
-    const parsed = RegisterSchema.safeParse(req.body);
+// @desc   Login user
+// @route  POST /api/v1/auth/login
+// @access Public
+export const login = asyncHandler(async (req: Request, res: Response) => {
+  const { user, accessToken, refreshToken } = await loginService(req.body);
 
-    if (!parsed.success) {
-      res.status(400).json({
-        errors: parsed.error.flatten().fieldErrors,
-      });
-      return;
-    }
+  setRefreshCookie(res, refreshToken);
 
-    try {
-      const user = await AuthService.register(parsed.data);
+  res.status(200).json({
+    message: "Login successful",
+    data: { user, accessToken, refreshToken },
+  });
+});
 
-      const { accessToken, refreshToken } = generateTokens(user);
+// @desc   Verify OTP
+// @route  POST /api/v1/auth/verify-otp
+// @access Public
+export const verifyOtp = asyncHandler(async (req: Request, res: Response) => {
+  await verifyOtpService(req.body);
 
-      setRefreshCookie(res, refreshToken);
+  res.status(200).json({
+    message: "Account verified successfully",
+    data: null,
+  });
+});
 
-      res.status(201).json({
-        message:
-          "User registered successfully. Please verify your email.",
-        accessToken,
-        refreshToken,
-        user: {
-          id: user._id,
-          name: user.name,
-          email: user.email,
-          role: user.role,
-          isVerified: user.isVerified,
-        },
-      });
-    } catch (err) {
-      handleError(res, err);
-    }
-  }
-);
+// @desc   Resend OTP
+// @route  POST /api/v1/auth/resend-otp
+// @access Public
+export const resendOtp = asyncHandler(async (req: Request, res: Response) => {
+  await resendOtpService(req.body);
 
-// POST /auth/verify-otp
-export const verifyOtp = asyncHandler(
-  async (req: Request, res: Response) => {
-    const parsed = OtpSchema.safeParse(req.body);
+  res.status(200).json({
+    message: "OTP sent successfully",
+    data: null,
+  });
+});
 
-    if (!parsed.success) {
-      res.status(400).json({
-        errors: parsed.error.flatten().fieldErrors,
-      });
-      return;
-    }
-
-    try {
-      await AuthService.verifyOtp(parsed.data);
-
-      res.status(200).json({
-        message: "Account verified successfully",
-      });
-    } catch (err) {
-      handleError(res, err);
-    }
-  }
-);
-
-// POST /auth/resend-otp
-export const resendOtp = asyncHandler(
-  async (req: Request, res: Response) => {
-    const parsed = EmailSchema.safeParse(req.body);
-
-    if (!parsed.success) {
-      res.status(400).json({
-        errors: parsed.error.flatten().fieldErrors,
-      });
-      return;
-    }
-
-    try {
-      await AuthService.resendOtp(parsed.data);
-
-      res.status(200).json({
-        message: "OTP sent successfully",
-      });
-    } catch (err) {
-      handleError(res, err);
-    }
-  }
-);
-
-// POST /auth/forget-password
+// @desc   Forget password
+// @route  POST /api/v1/auth/forget-password
+// @access Public
 export const forgetPassword = asyncHandler(
   async (req: Request, res: Response) => {
-    const parsed = EmailSchema.safeParse(req.body);
+    await forgetPasswordService(req.body);
 
-    if (!parsed.success) {
-      res.status(400).json({
-        errors: parsed.error.flatten().fieldErrors,
-      });
-      return;
-    }
-
-    try {
-      await AuthService.forgetPassword(parsed.data);
-
-      res.status(200).json({
-        message: "Reset password email sent",
-      });
-    } catch (err) {
-      handleError(res, err);
-    }
-  }
+    res.status(200).json({
+      message: "Reset password email sent",
+      data: null,
+    });
+  },
 );
 
-// POST /auth/reset-password
+// @desc   Reset password
+// @route  POST /api/v1/auth/reset-password
+// @access Public
 export const resetPassword = asyncHandler(
   async (req: Request, res: Response) => {
-    const parsed = ResetPasswordSchema.safeParse(req.body);
+    await resetPasswordService(req.body);
 
-    if (!parsed.success) {
-      res.status(400).json({
-        errors: parsed.error.flatten().fieldErrors,
-      });
-      return;
-    }
-
-    try {
-      await AuthService.resetPassword(parsed.data);
-
-      res.status(200).json({
-        message: "Password updated successfully",
-      });
-    } catch (err) {
-      handleError(res, err);
-    }
-  }
+    res.status(200).json({
+      message: "Password updated successfully",
+      data: null,
+    });
+  },
 );
 
-// POST /auth/login
-export const login = asyncHandler(
-  async (req: Request, res: Response) => {
-    const parsed = LoginSchema.safeParse(req.body);
+// @desc   Refresh access token
+// @route  POST /api/v1/auth/refresh-token
+// @access Public
+export const refreshToken = asyncHandler(async (req: Request, res: Response) => {
+  const token = req.cookies?.RefreshToken;
 
-    if (!parsed.success) {
-      res.status(400).json({
-        errors: parsed.error.flatten().fieldErrors,
-      });
-      return;
-    }
+  const { accessToken } = await refreshTokenService(token);
 
-    try {
-      const user = await AuthService.login(parsed.data);
+  res.cookie("AccessToken", accessToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict" as const,
+    maxAge: 15 * 60 * 1000,
+  });
 
-      const { accessToken, refreshToken } =
-        generateTokens(user);
+  res.status(200).json({
+    message: "Access token refreshed successfully",
+    accessToken,
+  });
+});
 
-      setRefreshCookie(res, refreshToken);
+// @desc   Logout user
+// @route  POST /api/v1/auth/logout
+// @access Private
+export const logout = asyncHandler(async (_req: Request, res: Response) => {
+  const cookieOptions = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict" as const,
+  };
 
-      res.status(200).json({
-        message: "Logged in successfully",
-        accessToken,
-        refreshToken,
-        user: {
-          id: user._id,
-          name: user.name,
-          email: user.email,
-          role: user.role,
-          isVerified: user.isVerified,
-        },
-      });
-    } catch (err) {
-      handleError(res, err);
-    }
-  }
-);
+  res.clearCookie("AccessToken", cookieOptions);
+  res.clearCookie("RefreshToken", cookieOptions);
 
-// POST /auth/refresh-token
-export const refreshToken = asyncHandler(
-  async (req: Request, res: Response) => {
-    const token = req.cookies?.RefreshToken;
-
-    if (!token) {
-      res.status(401).json({
-        message: "Refresh token is required",
-      });
-      return;
-    }
-
-    try {
-      const user = await AuthService.refreshToken(token);
-
-      const tokens = generateTokens(user);
-
-      setRefreshCookie(res, tokens.refreshToken);
-
-      res.status(200).json({
-        message: "Token refreshed successfully",
-        accessToken: tokens.accessToken,
-        refreshToken: tokens.refreshToken,
-      });
-    } catch (err) {
-      handleError(res, err);
-    }
-  }
-);
-
-// GET /auth/me
-export const getMe = asyncHandler(
-  async (req: Request, res: Response) => {
-    if (!req.user) {
-      res.status(401).json({
-        message: "Unauthorized",
-      });
-      return;
-    }
-
-    try {
-      const user = await AuthService.getMe(req.user.id);
-
-      res.status(200).json({
-        user,
-      });
-    } catch (err) {
-      handleError(res, err);
-    }
-  }
-);
+  res.status(200).json({ message: "Logged out successfully" });
+});

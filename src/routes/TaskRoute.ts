@@ -12,19 +12,12 @@ import {
 
 const router = express.Router();
 
-router.route("/count").get(countTasks);
-
-router
-  .route("/")
-  .post(createTask)
-  .get(getAllTasks);
-
-router.route("/project/:projectId").get(getTasksByProject);
-
-router
-  .route("/:id")
-  .get(getTaskById)
-  .put(updateTask)
-  .delete(deleteTask);
+router.get("/count", countTasks);
+router.post("/", createTask);
+router.get("/", getAllTasks);
+router.get("/project/:projectId", getTasksByProject);
+router.get("/:id", getTaskById);
+router.put("/:id", updateTask);
+router.delete("/:id", deleteTask);
 
 export default router;

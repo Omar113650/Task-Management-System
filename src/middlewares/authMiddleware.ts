@@ -4,10 +4,9 @@ import { Request, Response, NextFunction } from "express";
 export interface JwtPayload {
   id: string;
   email: string;
-  role: "Admin" | "Member"; // متوافق مع الـ User model
+  role: "Admin" | "Member";
 }
 
-// Extend Express Request
 declare global {
   namespace Express {
     interface Request {
@@ -16,58 +15,68 @@ declare global {
   }
 }
 
+// Verify Access Token
 export const verifyToken = (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): void => {
   const authHeader = req.headers.authorization;
 
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    res.status(401).json({ message: "Access denied. No token provided." });
+  if (!authHeader?.startsWith("Bearer ")) {
+    res.status(401).json({
+      message: "Access token is required",
+    });
     return;
   }
 
   const token = authHeader.split(" ")[1];
 
-  if (!token) {
-    res.status(401).json({ message: "Token missing after Bearer" });
-    return;
-  }
-
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
+
     req.user = decoded;
+
     next();
   } catch {
-    res.status(401).json({ message: "Invalid or expired token" });
+    res.status(401).json({
+      message: "Invalid or expired access token",
+    });
   }
 };
 
+// Admin Only
 export const verifyAdmin = (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): void => {
   verifyToken(req, res, () => {
-    if (req.user?.role === "Admin") { // كانت isAdmin - غلط
-      next();
-    } else {
-      res.status(403).json({ message: "Access denied. Admins only." });
+    if (req.user?.role !== "Admin") {
+      res.status(403).json({
+        message: "Admins only",
+      });
+      return;
     }
+
+    next();
   });
 };
 
-export const verifyUserOrAdmin = (
+// Member Or Admin
+export const verifyMember = (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): void => {
   verifyToken(req, res, () => {
-    if (req.user?.role === "Admin" || req.user?.id === req.params.id) {
+    if (req.user?.role === "Member") {
       next();
-    } else {
-      res.status(403).json({ message: "Access denied. Not allowed." });
+      return;
     }
+
+    res.status(403).json({
+      message: "Access denied",
+    });
   });
 };

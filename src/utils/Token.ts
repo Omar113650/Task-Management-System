@@ -15,20 +15,16 @@ export const generateTokens = (user: IUser) => {
     role: user.role,
   };
 
-  const accessToken = jwt.sign(
-    payload,
-    process.env.JWT_SECRET as string,
-    {
-      expiresIn: "15m",
-    }
-  );
+  const accessToken = jwt.sign(payload, process.env.JWT_SECRET as string, {
+    expiresIn: "15m",
+  });
 
   const refreshToken = jwt.sign(
     payload,
     process.env.JWT_REFRESH_SECRET as string,
     {
       expiresIn: "7d",
-    }
+    },
   );
 
   return {
@@ -37,10 +33,7 @@ export const generateTokens = (user: IUser) => {
   };
 };
 
-export const setRefreshCookie = (
-  res: Response,
-  refreshToken: string
-) => {
+export const setRefreshCookie = (res: Response, refreshToken: string) => {
   res.cookie("RefreshToken", refreshToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",

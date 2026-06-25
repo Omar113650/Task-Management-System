@@ -18,22 +18,12 @@ const connectDB = async (): Promise<void> => {
 };
 
 app.use(
-  async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> => {
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     if (!isConnected) {
       await connectDB();
     }
     next();
-  }
+  },
 );
 
 export default connectDB;
-
-
-
-
-
-

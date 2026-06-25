@@ -1,40 +1,20 @@
 import { z } from "zod";
 
-// ===== Create =====
-export const CreateProjectSchema = z.object({
+export const ProjectSchema = z.object({
   title: z
-    .string({ error: "Title is required" })
-    .min(1, "Title cannot be empty")
-    .max(100, "Title must be at most 100 characters"),
+    .string({ error: "title is required" })
+    .min(1, "title cannot be empty")
+    .max(100, "title must be at most 100 characters"),
 
   description: z
-    .string({ error: "Description is required" })
-    .min(1, "Description cannot be empty")
-    .max(500, "Description must be at most 500 characters"),
+    .string({ error: "description is required" })
+    .min(1, "description cannot be empty")
+    .max(500, "description must be at most 500 characters"),
 
   status: z
-    .enum(["Active", "Inactive", "Completed", "Pending"])
+    .enum(["Active", "Completed", "Pending"])
     .default("Pending")
     .optional(),
 });
 
-// ===== Update =====
-export const UpdateProjectSchema = z.object({
-  title: z
-    .string()
-    .min(1, "Title cannot be empty")
-    .max(100, "Title must be at most 100 characters")
-    .optional(),
-
-  description: z
-    .string()
-    .min(1, "Description cannot be empty")
-    .max(500, "Description must be at most 500 characters")
-    .optional(),
-
-  status: z.enum(["Active", "Inactive", "Completed", "Pending"]).optional(),
-});
-
-// ===== Types =====
-export type CreateProjectInput = z.infer<typeof CreateProjectSchema>;
-export type UpdateProjectInput = z.infer<typeof UpdateProjectSchema>;
+export type ProjectValidation= z.infer<typeof ProjectSchema>;

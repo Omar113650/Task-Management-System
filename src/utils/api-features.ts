@@ -27,7 +27,7 @@ export class ApiFeatures<T extends Document> {
 
   constructor(private queryString: QueryString) {}
 
-  // ─── Filter
+  //  Filter
   filter(): this {
     const queryObj = { ...this.queryString };
     const excludedFields = ["page", "sort", "limit", "fields", "order"];
